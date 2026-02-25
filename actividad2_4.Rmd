@@ -2,13 +2,16 @@
 title: "Tree physiology"
 author: "Ivan Marbà Vologjanin"
 date: "2026-02-04"
-output: html_document
-bibliography: ../biblio/references.bib
-csl: ../biblio/apa.csl
+output:
+  pdf_document: default
+  html_document: default
+bibliography: biblio/references.bib
+csl: biblio/apa.csl
 ---
 
-```{r setup, include=FALSE, message=FALSE}
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(tinytex)
 ```
 
 ## Introduction
@@ -17,7 +20,7 @@ In recent decades, drought-driven tree mortality has become widespread, particul
 
 We investigated massive 2023 mortality event in Aleppo pine (*Pinus halepensis*) at the Garraf Massif (NE Iberian Peninsula).
 
-![Mortality zone, Garraf 2024](../images/location.JPEG)
+![Mortality zone, Garraf 2024](images/location.JPEG)
 
 This episode of drought-driven tree mortality from 2023 was reported in the [Catalan news](https://www.3cat.cat/3catinfo/boscos-que-moren-per-la-sequera-el-garraf-mes-a-prop-de-ser-un-paisatge-semidesertic/noticia/3276618/). Despite the rains of recent months, the effects of the drought remain [visible](https://www.3cat.cat/3catinfo/les-dues-cares-del-garraf-esplendor-per-les-pluges-pero-reducte-duna-sequera-persistent/noticia/3354963/).
 
@@ -25,12 +28,12 @@ This episode of drought-driven tree mortality from 2023 was reported in the [Cat
 
 Climatic data were obtained from the meteorological station at El Prat Airport, which has recorded weather variables since 1950 [@prohom2023]. These are the trends of temperature and precipitation for the period 1950-2022.
 
-```{r}
+```{r, message=FALSE}
 library(dplyr)
 library(ggplot2)
 
 
-data <- read.csv("../data/aeroport_del_prat1.csv", sep = ";")
+data <- read.csv("data/aeroport_del_prat1.csv", sep = ";")
 
 # Calcular la precipitació mitjana anual
 dades_anuals_precip <- data %>%
@@ -93,13 +96,7 @@ pre
 summary(cars)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
