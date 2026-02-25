@@ -1,0 +1,106 @@
+---
+title: "Tree physiology"
+author: "Ivan Marbà Vologjanin"
+date: "2026-02-04"
+output: html_document
+bibliography: ../biblio/references.bib
+csl: ../biblio/apa.csl
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+In recent decades, drought-driven tree mortality has become widespread, particularly in Mediterranean ecosystems [@lemus-canovas2024], where prolonged drought accelerates forest-to-shrubland transitions [@coughlandeperez2022]. Detecting **early-warning signals** of tree decline is therefore essential for anticipating ecosystem changes and guiding conservation.
+
+We investigated massive 2023 mortality event in Aleppo pine (*Pinus halepensis*) at the Garraf Massif (NE Iberian Peninsula).
+
+![Mortality zone, Garraf 2024](../images/location.JPEG)
+
+This episode of drought-driven tree mortality from 2023 was reported in the [Catalan news](https://www.3cat.cat/3catinfo/boscos-que-moren-per-la-sequera-el-garraf-mes-a-prop-de-ser-un-paisatge-semidesertic/noticia/3276618/). Despite the rains of recent months, the effects of the drought remain [visible](https://www.3cat.cat/3catinfo/les-dues-cares-del-garraf-esplendor-per-les-pluges-pero-reducte-duna-sequera-persistent/noticia/3354963/).
+
+# Climatic data
+
+Climatic data were obtained from the meteorological station at El Prat Airport, which has recorded weather variables since 1950 [@prohom2023]. These are the trends of temperature and precipitation for the period 1950-2022.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+
+data <- read.csv("../data/aeroport_del_prat1.csv", sep = ";")
+
+# Calcular la precipitació mitjana anual
+dades_anuals_precip <- data %>%
+  group_by(Year) %>%
+  summarise(Precipitacio_Mitjana_Anual = sum(RR, na.rm = TRUE), .groups = "drop")
+
+# Ajustem una regressió lineal per la precipitació mitjana anual
+model_precip <- lm(Precipitacio_Mitjana_Anual ~ Year, data = dades_anuals_precip)
+
+# Extreure R² i p-value del model de regressió
+resum_model_precip <- summary(model_precip)
+R2_precip <- round(resum_model_precip$r.squared, 3)
+p_value_precip <- formatC(resum_model_precip$coefficients[2, 4], format = "e", digits = 4)
+
+# Funció per convertir el p-valor en asteriscs
+get_significance_stars <- function(p) {
+  if (p < 0.001) {
+    return("***")
+  } else if (p < 0.01) {
+    return("**")
+  } else if (p < 0.05) {
+    return("*")
+  } else {
+    return("ns")  # Text per a p ≥ 0.05
+  }
+}
+
+# Obtenir els asteriscs segons el p-valor
+p_stars <- get_significance_stars(as.numeric(p_value_precip))
+
+# Extreure els coeficients del model (intercept i pendent)
+coeficients <- coef(model_precip)
+intercept <- round(coeficients[1], 2)
+pendent <- round(coeficients[2], 2)
+
+# Crear el text de l'equació en format y = mx + b
+equacio_text <- paste0("y = ", pendent, "x + ", intercept)
+
+# Crear el text de l'etiqueta
+subtitle_text <- paste0(equacio_text,
+                        "   |   R² = ", R2_precip,
+                        "   ", p_stars)
+# Crear el gràfic per la precipitació mitjana anual
+
+pre<-ggplot(dades_anuals_precip, aes(x = Year, y = Precipitacio_Mitjana_Anual)) +
+  geom_line(color = "blue") +
+  scale_x_continuous(limits = c(1950, 2023), breaks = scales::breaks_width(10)) +
+  scale_y_continuous()+#breaks = scales::breaks_width(10)) + 
+  geom_smooth(method = "lm", color = "red", formula= y ~ x, linetype=2, se = FALSE) +
+  labs(title = "Precipitation trend at Aeroport del Prat (1950-2023)",
+       subtitle = subtitle_text,
+       x = "Time (Year)",
+       y = "Precipitation (mm)") +
+  theme_classic(base_family = "serif")
+
+pre
+```
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+##Bibliography
