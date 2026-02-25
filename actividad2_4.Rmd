@@ -92,13 +92,25 @@ pre<-ggplot(dades_anuals_precip, aes(x = Year, y = Precipitacio_Mitjana_Anual)) 
 pre
 ```
 
-```{r cars}
-summary(cars)
+# DBH by status
+
+
+```{r}
+library(readxl)
+library(ggplot2)
+data <- read_xlsx("data/garraf_01_08_2024.xlsx")
+
+ggplot(data, aes(x = STATUS, y = `DBH corrected (mm)`)) +
+  geom_boxplot(fill = NA, color = "black") +
+  geom_jitter(width = 0.15, size = 2, alpha = 0.7) +
+  labs(
+    x = "status",
+    y = "DBH (cm)",
+    title = "DBH by status"
+  ) +
+  theme_minimal()
 ```
 
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
 \newpage
-##Bibliography
+
+## Bibliography
