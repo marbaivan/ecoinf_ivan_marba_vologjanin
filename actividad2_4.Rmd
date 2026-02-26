@@ -111,6 +111,31 @@ ggplot(data, aes(x = STATUS, y = `DBH corrected (mm)`)) +
   theme_minimal()
 ```
 
+# Site map
+
+```{r}
+library(dplyr)
+library(sf)
+library(leaflet)
+library(gpx)
+
+#import gpx data
+
+gpx <- read_gpx("data/waypoints_garraf.gpx")
+
+waypoints <- as_tibble(gpx$waypoints)
+
+leaflet() %>%
+  addTiles() %>%
+  setView(lng = 1.8677, lat = 41.19 , zoom = 7) %>% 
+  addMarkers(data = waypoints, lng = ~Longitude, lat = ~Latitude) 
+
+
+ 
+ 
+
+```
+
 \newpage
 
 ## Bibliography
