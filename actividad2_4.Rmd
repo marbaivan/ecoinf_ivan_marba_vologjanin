@@ -123,7 +123,7 @@ library(gpx)
 
 gpx <- read_gpx("data/waypoints_garraf.gpx")
 
-waypoints <- as_tibble(gpx$waypoints)
+waypoints <- as_tibble(gpx$waypoints) #convertir a tibble la part de la llista que ens interessa
 
 leaflet() %>%
   addTiles() %>%
