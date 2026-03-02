@@ -123,12 +123,43 @@ library(gpx)
 
 gpx <- read_gpx("data/waypoints_garraf.gpx")
 
-waypoints <- as_tibble(gpx$waypoints) #convertir a tibble la part de la llista que ens interessa
+waypoints <- as_tibble(gpx$waypoints) %>%  #convertir a tibble la part de la llista que ens interessa
+  slice(-c(10, 11)) %>%  #elimino dues files que representen al mateix arbre
+  rename(GPS = Name) %>%          # canviar nom columna
+  mutate(GPS = as.numeric(GPS))   # treure zero inicial
 
-leaflet() %>%
+data <- data %>%
+  mutate(GPS = as.numeric(sub("-.*", "", GPS))) #convertir columna GPS a numeric i convertir el 49-51 en només 40
+
+data_waypoints <- waypoints %>% 
+  left_join(data, by = "GPS") %>% 
+  select(Elevation, Latitude, Longitude, GPS, STATUS)
+
+pal <- colorFactor(            #paleta colors
+  palette = c("green", "red"),
+  domain = data_waypoints$STATUS
+) 
+
+leaflet(data = data_waypoints) %>%
   addTiles() %>%
-  setView(lng = 1.8677, lat = 41.19 , zoom = 7) %>% 
-  addMarkers(data = waypoints, lng = ~Longitude, lat = ~Latitude) 
+  setView(lng = 1.8677, lat = 41.19, zoom = 7) %>% 
+  addCircleMarkers(
+    lng = ~Longitude,
+    lat = ~Latitude,
+    color = ~pal(STATUS),
+    fillColor = ~pal(STATUS),
+    fillOpacity = 0.8,
+    radius = 6,
+    popup = ~paste("GPS:", GPS,
+                   "<br>Status:", STATUS)
+  ) %>%
+  addLegend(
+    "bottomright",
+    pal = pal,
+    values = ~STATUS,
+    title = "Tree status",
+    labels = c("Viu (A)", "Mort (D)")
+  )
 
 
  
