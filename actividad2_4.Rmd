@@ -5,7 +5,6 @@ date: "2026-02-04"
 output:
   pdf_document: default
   html_document: default
-  always_allow_html: true
 bibliography: biblio/references.bib
 csl: biblio/apa.csl
 ---
@@ -118,6 +117,7 @@ library(dplyr)
 library(sf)
 library(leaflet)
 library(gpx)
+library(leaflet.extras)
 
 #import gpx data
 
@@ -159,7 +159,10 @@ leaflet(data = data_waypoints) %>%
     values = ~STATUS,
     title = "Tree status",
     labels = c("Viu (A)", "Mort (D)")
-  )
+  ) %>% 
+  addScaleBar(position = "bottomleft", 
+              options = scaleBarOptions(imperial = F))  #escala
+  #addControlNorthArrow(position = "topright") #nord
 
 
  
