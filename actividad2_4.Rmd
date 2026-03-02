@@ -5,6 +5,7 @@ date: "2026-02-04"
 output:
   pdf_document: default
   html_document: default
+  always_allow_html: true
 bibliography: biblio/references.bib
 csl: biblio/apa.csl
 ---
@@ -16,7 +17,7 @@ library(tinytex)
 
 ## Introduction
 
-In recent decades, drought-driven tree mortality has become widespread, particularly in Mediterranean ecosystems [@lemus-canovas2024], where prolonged drought accelerates forest-to-shrubland transitions [@coughlandeperez2022]. Detecting **early-warning signals** of tree decline is therefore essential for anticipating ecosystem changes and guiding conservation.
+In recent decades, drought-driven tree mortality has become widespread, particularly in ***Mediterranean ecosystems*** [@lemus-canovas2024], where prolonged drought accelerates forest-to-shrubland transitions [@coughlandeperez2022]. Detecting **early-warning signals** of tree decline is therefore essential for anticipating ecosystem changes and guiding conservation.
 
 We investigated massive 2023 mortality event in Aleppo pine (*Pinus halepensis*) at the Garraf Massif (NE Iberian Peninsula).
 
@@ -93,7 +94,6 @@ pre
 ```
 
 # DBH by status
-
 
 ```{r}
 library(readxl)
