@@ -117,6 +117,7 @@ library(dplyr)
 library(sf)
 library(leaflet)
 library(gpx)
+library(htmltools) 
 
 #import gpx data
 
@@ -132,12 +133,32 @@ data <- data %>%
 
 data_waypoints <- waypoints %>% 
   left_join(data, by = "GPS") %>% 
-  select(Elevation, Latitude, Longitude, GPS, STATUS)
+  select(Elevation, Latitude, Longitude, GPS, STATUS)%>%  #em quedo amb les columnes que m'interessen
+  mutate(
+    STATUS = factor(
+      STATUS,
+      levels = c("A", "D"),
+      labels = c("Alive", "Dead")  #canvi per a que a la llegenda del mapa surti Alive i Dead
+    )
+  ) 
+
 
 pal <- colorFactor(            #paleta colors
   palette = c("green", "red"),
   domain = data_waypoints$STATUS
 ) 
+
+north_arrow <- HTML('
+<div style="
+    width: 20px;
+    height: 30px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+">
+    <div>⮙</div> <!-- add arrow UTF8 symbol here -->
+    <div>N</div>
+</div>')   #crear imatge nord
 
 leaflet(data = data_waypoints) %>%
   addTiles() %>%
@@ -161,8 +182,9 @@ leaflet(data = data_waypoints) %>%
     labels = c("Viu (A)", "Mort (D)")
   ) %>% 
   addScaleBar(position = "bottomleft", 
-              options = scaleBarOptions(imperial = F))  #escala
-  #addControlNorthArrow(position = "topright") #nord
+              options = scaleBarOptions(imperial = F)) %>% #escala
+  addControl(north_arrow, position = "topleft")   #north arrow
+  
 
 
  
