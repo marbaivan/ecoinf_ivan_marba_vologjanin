@@ -3,7 +3,8 @@ title: "Tree physiology"
 author: "Ivan Marbà Vologjanin"
 date: "2026-02-04"
 output:
-  pdf_document: default
+  pdf_document:
+    keep_tex: true
   html_document: default
 bibliography: biblio/references.bib
 csl: biblio/apa.csl
@@ -112,84 +113,99 @@ ggplot(data, aes(x = STATUS, y = `DBH corrected (mm)`)) +
 
 # Site map
 
-```{r}
+
+```{r mapa_pdf, eval=!knitr::is_html_output(), echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', out.width='100%'}
 library(dplyr)
 library(sf)
 library(leaflet)
 library(gpx)
-library(htmltools) 
+library(htmltools)
+library(htmlwidgets)
+library(webshot)
 
-#import gpx data
-
+# Dades (mateix codi)
 gpx <- read_gpx("data/waypoints_garraf.gpx")
-
-waypoints <- as_tibble(gpx$waypoints) %>%  #convertir a tibble la part de la llista que ens interessa
-  slice(-c(10, 11)) %>%  #elimino dues files que representen al mateix arbre
-  rename(GPS = Name) %>%          # canviar nom columna
-  mutate(GPS = as.numeric(GPS))   # treure zero inicial
+waypoints <- as_tibble(gpx$waypoints) %>% 
+  slice(-c(10, 11)) %>% 
+  rename(GPS = Name) %>% 
+  mutate(GPS = as.numeric(GPS))
 
 data <- data %>%
-  mutate(GPS = as.numeric(sub("-.*", "", GPS))) #convertir columna GPS a numeric i convertir el 49-51 en només 40
+  mutate(GPS = as.numeric(sub("-.*", "", GPS)))
 
 data_waypoints <- waypoints %>% 
   left_join(data, by = "GPS") %>% 
-  select(Elevation, Latitude, Longitude, GPS, STATUS)%>%  #em quedo amb les columnes que m'interessen
-  mutate(
-    STATUS = factor(
-      STATUS,
-      levels = c("A", "D"),
-      labels = c("Alive", "Dead")  #canvi per a que a la llegenda del mapa surti Alive i Dead
-    )
-  ) 
+  select(Elevation, Latitude, Longitude, GPS, STATUS) %>%
+  mutate(STATUS = factor(STATUS, levels = c("A", "D"), labels = c("Alive", "Dead")))
 
-
-pal <- colorFactor(            #paleta colors
-  palette = c("green", "red"),
-  domain = data_waypoints$STATUS
-) 
+pal <- colorFactor(palette = c("green", "red"), domain = data_waypoints$STATUS)
 
 north_arrow <- HTML('
-<div style="
-    width: 20px;
-    height: 30px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 22px;
-">
-    <div>⮙</div> <!-- add arrow UTF8 symbol here -->
-    <div>N</div>
-</div>')   #crear imatge nord
+<div style="width: 20px; height: 30px; text-align: center; font-weight: bold; font-size: 22px;">
+  <div>⮙</div>
+  <div>N</div>
+</div>')
+
+# Crea el mapa
+map <- leaflet(data = data_waypoints) %>%
+  addTiles() %>%
+  setView(lng = 1.8677, lat = 41.19, zoom = 7) %>% 
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
+                   color = ~pal(STATUS), fillColor = ~pal(STATUS),
+                   fillOpacity = 0.8, radius = 6,
+                   popup = ~paste("GPS:", GPS, "<br>Status:", STATUS)) %>%
+  addMiniMap(position = "topright", width = 150, height = 150) %>% 
+  addLegend("bottomright", pal = pal, values = ~STATUS, title = "Tree status") %>%
+  addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
+  addControl(north_arrow, position = "topleft")
+
+# GENERA LA IMATGE ESTÀTICA (NOMÉS AQUESTA PART CANVIA)
+saveWidget(map, "mapa.html", selfcontained = TRUE)
+webshot("mapa.html", "mapa_arbre.png", vwidth = 1200, vheight = 900, zoom = 1.5)
+
+# MOSTRA LA IMATGE AL PDF
+knitr::include_graphics("mapa_arbre.png")
+
+```
+
+```{r mapa_interactiu, eval=knitr::is_html_output(), echo=FALSE, warning=FALSE, message=FALSE}
+library(dplyr)
+library(leaflet)
+library(gpx)
+library(htmltools)
+gpx <- read_gpx("data/waypoints_garraf.gpx")
+waypoints <- as_tibble(gpx$waypoints) %>% 
+  slice(-c(10, 11)) %>% 
+  rename(GPS = Name) %>% 
+  mutate(GPS = as.numeric(GPS))
+
+data <- data %>%
+  mutate(GPS = as.numeric(sub("-.*", "", GPS)))
+
+data_waypoints <- waypoints %>% 
+  left_join(data, by = "GPS") %>% 
+  select(Elevation, Latitude, Longitude, GPS, STATUS) %>%
+  mutate(STATUS = factor(STATUS, levels = c("A", "D"), labels = c("Alive", "Dead")))
+
+pal <- colorFactor(palette = c("green", "red"), domain = data_waypoints$STATUS)
+
+north_arrow <- HTML('
+<div style="width: 20px; height: 30px; text-align: center; font-weight: bold; font-size: 22px;">
+  <div>⮙</div>
+  <div>N</div>
+</div>')
 
 leaflet(data = data_waypoints) %>%
   addTiles() %>%
   setView(lng = 1.8677, lat = 41.19, zoom = 7) %>% 
-  addCircleMarkers(
-    lng = ~Longitude,
-    lat = ~Latitude,
-    color = ~pal(STATUS),
-    fillColor = ~pal(STATUS),
-    fillOpacity = 0.8,
-    radius = 6,
-    popup = ~paste("GPS:", GPS,
-                   "<br>Status:", STATUS)
-  ) %>%
+  addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
+                   color = ~pal(STATUS), fillColor = ~pal(STATUS),
+                   fillOpacity = 0.8, radius = 6,
+                   popup = ~paste("GPS:", GPS, "<br>Status:", STATUS)) %>%
   addMiniMap(position = "topright", width = 150, height = 150) %>% 
-  addLegend(
-    "bottomright",
-    pal = pal,
-    values = ~STATUS,
-    title = "Tree status",
-    labels = c("Viu (A)", "Mort (D)")
-  ) %>% 
-  addScaleBar(position = "bottomleft", 
-              options = scaleBarOptions(imperial = F)) %>% #escala
-  addControl(north_arrow, position = "topleft")   #north arrow
-  
-
-
- 
- 
-
+  addLegend("bottomright", pal = pal, values = ~STATUS, title = "Tree status") %>%
+  addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
+  addControl(north_arrow, position = "topleft")
 ```
 
 \newpage
