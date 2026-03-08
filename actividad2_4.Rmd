@@ -3,9 +3,9 @@ title: "Tree physiology"
 author: "Ivan Marbà Vologjanin"
 date: "2026-02-04"
 output:
+  html_document: default
   pdf_document:
     keep_tex: true
-  html_document: default
 bibliography: biblio/references.bib
 csl: biblio/apa.csl
 ---
@@ -112,9 +112,7 @@ ggplot(data, aes(x = STATUS, y = `DBH corrected (mm)`)) +
 ```
 
 # Site map
-
-
-```{r mapa_pdf, eval=!knitr::is_html_output(), echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', out.width='100%'}
+```{r mapa_pdf, eval=!knitr::is_html_output(), results= "hide", echo=FALSE, warning=FALSE, message=FALSE, out.width='100%'}
 library(dplyr)
 library(sf)
 library(leaflet)
@@ -123,6 +121,7 @@ library(htmltools)
 library(htmlwidgets)
 library(webshot)
 
+#chunk per generar el mapa, ho separo en dos pq així no surti un missatge ##NULL
 # Dades (mateix codi)
 gpx <- read_gpx("data/waypoints_garraf.gpx")
 waypoints <- as_tibble(gpx$waypoints) %>% 
@@ -159,13 +158,17 @@ map <- leaflet(data = data_waypoints) %>%
   addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
   addControl(north_arrow, position = "topleft")
 
-# GENERA LA IMATGE ESTÀTICA (NOMÉS AQUESTA PART CANVIA)
+# GENERA LA IMATGE ESTÀTICA (serveix per a què al pdf quedi la imatge estàtica)
 saveWidget(map, "mapa.html", selfcontained = TRUE)
 webshot("mapa.html", "mapa_arbre.png", vwidth = 1200, vheight = 900, zoom = 1.5)
 
 # MOSTRA LA IMATGE AL PDF
 knitr::include_graphics("mapa_arbre.png")
 
+```
+
+```{r mapa_pdf_show, eval=!knitr::is_html_output(), echo=FALSE, out.width="100%"}
+knitr::include_graphics("mapa_arbre.png")
 ```
 
 ```{r mapa_interactiu, eval=knitr::is_html_output(), echo=FALSE, warning=FALSE, message=FALSE}
