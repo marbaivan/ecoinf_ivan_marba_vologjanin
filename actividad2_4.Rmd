@@ -199,7 +199,7 @@ north_arrow <- HTML('
 </div>')
 
 leaflet(data = data_waypoints) %>%
-  addTiles() %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
   setView(lng = 1.8677, lat = 41.19, zoom = 7) %>% 
   addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
                    color = ~pal(STATUS), fillColor = ~pal(STATUS),
