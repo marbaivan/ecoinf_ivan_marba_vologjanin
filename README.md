@@ -8,6 +8,6 @@ Repositorio para la **práctica de reproducibilidad y control de versiones**, as
     Citas bibliograficas utilizadas para la realización del documento markdown.
 -   `Data/`\
     Carpeta dónde están localizados los datos.
--   `images`\
+-   `images/`\
     Carpeta con las imágenes empradas.
 
