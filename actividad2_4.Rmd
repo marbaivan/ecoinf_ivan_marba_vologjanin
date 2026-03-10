@@ -27,7 +27,7 @@ This episode of drought-driven tree mortality from 2023 was reported in the [Cat
 
 # Climatic data
 
-Climatic data were obtained from the meteorological station at El Prat Airport, which has recorded weather variables since 1950 [@prohom2023]. These are the trends of temperature and precipitation for the period 1950-2022.
+Climatic data were obtained from the meteorological station at El Prat Airport, which has recorded weather variables since 1950 [@prohom2023]. These are the trends of temperature and precipitation for the period 1950-2022.kajsdhkajsd
 
 ```{r, message=FALSE}
 library(dplyr)
@@ -210,7 +210,9 @@ leaflet(data = data_waypoints) %>%
   addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
   addControl(north_arrow, position = "topleft")
 ```
-
+```{r taula_waypoints, echo=FALSE}
+knitr::kable(data_waypoints)
+```
 \newpage
 
 ## Bibliography
