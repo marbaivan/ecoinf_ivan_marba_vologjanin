@@ -211,7 +211,10 @@ leaflet(data = data_waypoints) %>%
   addControl(north_arrow, position = "topleft")
 ```
 ```{r taula_waypoints, echo=FALSE}
-knitr::kable(data_waypoints)
+knitr::kable(data_waypoints,
+             col.names = c('Elevation', 'Latitude', 'Longitude', 'GPS', 'status'),
+             align = "c",
+             caption = "Table 1. Tree waypoints by status")
 ```
 \newpage
 
