@@ -37,6 +37,16 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \newsavebox\pandoc@box
@@ -134,7 +144,7 @@ remain
 Climatic data were obtained from the meteorological station at El Prat
 Airport, which has recorded weather variables since 1950 (Prohom et al.,
 2023). These are the trends of temperature and precipitation for the
-period 1950-2022.
+period 1950-2022.kajsdhkajsd
 
 \pandocbounded{\includegraphics[keepaspectratio]{actividad2_4_files/figure-latex/unnamed-chunk-1-1.pdf}}
 
@@ -145,6 +155,50 @@ period 1950-2022.
 \section{Site map}\label{site-map}
 
 \includegraphics[width=1\linewidth]{mapa_arbre}
+
+\begin{longtable}[]{@{}ccccc@{}}
+\caption{Table 1. Tree waypoints by status}\tabularnewline
+\toprule\noalign{}
+Elevation & Latitude & Longitude & GPS & status \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Elevation & Latitude & Longitude & GPS & status \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+92.55734 & 41.25769 & 1.911424 & 41 & Alive \\
+97.02628 & 41.25783 & 1.911178 & 42 & Dead \\
+110.57786 & 41.25801 & 1.910997 & 43 & Alive \\
+115.11000 & 41.25799 & 1.910749 & 44 & Dead \\
+111.23808 & 41.25794 & 1.910576 & 45 & Alive \\
+104.83898 & 41.25779 & 1.910645 & 46 & Dead \\
+128.21197 & 41.25850 & 1.910603 & 47 & Dead \\
+120.80096 & 41.25859 & 1.910589 & 48 & Alive \\
+130.67381 & 41.25885 & 1.910402 & 49 & Dead \\
+129.23080 & 41.25885 & 1.910261 & 52 & Alive \\
+137.25676 & 41.25902 & 1.910248 & 53 & Alive \\
+137.60625 & 41.25907 & 1.910123 & 54 & Dead \\
+142.74600 & 41.25914 & 1.910479 & 55 & Alive \\
+152.26955 & 41.25926 & 1.910590 & 56 & Dead \\
+157.21008 & 41.25932 & 1.910698 & 57 & Dead \\
+160.91292 & 41.25940 & 1.910672 & 58 & Alive \\
+162.10466 & 41.25926 & 1.910805 & 59 & Dead \\
+160.46330 & 41.25923 & 1.910844 & 60 & Alive \\
+176.92708 & 41.25978 & 1.910589 & 61 & Dead \\
+178.81369 & 41.25961 & 1.910521 & 62 & Alive \\
+193.20482 & 41.25971 & 1.910323 & 63 & Alive \\
+193.43950 & 41.25967 & 1.910396 & 64 & Dead \\
+198.13089 & 41.25973 & 1.910649 & 65 & Dead \\
+201.25055 & 41.25981 & 1.910682 & 66 & Alive \\
+213.48778 & 41.26010 & 1.910762 & 67 & Alive \\
+197.99074 & 41.26010 & 1.910878 & 68 & Dead \\
+202.32651 & 41.25995 & 1.911139 & 69 & Dead \\
+201.19251 & 41.25991 & 1.911138 & 70 & Alive \\
+146.15033 & 41.25991 & 1.911142 & 71 & Alive \\
+148.37418 & 41.25909 & 1.910274 & 72 & Dead \\
+\end{longtable}
 
 \newpage
 

@@ -3,9 +3,9 @@ title: "Tree physiology"
 author: "Ivan Marbà Vologjanin"
 date: "2026-02-04"
 output:
-  html_document: default
   pdf_document:
     keep_tex: true
+  html_document: default
 bibliography: biblio/references.bib
 csl: biblio/apa.csl
 ---
@@ -147,7 +147,7 @@ north_arrow <- HTML('
 
 # Crea el mapa
 map <- leaflet(data = data_waypoints) %>%
-  addTiles() %>%
+  addProviderTiles(providers$Esri.WorldImagery) %>%
   setView(lng = 1.8677, lat = 41.19, zoom = 7) %>% 
   addCircleMarkers(lng = ~Longitude, lat = ~Latitude,
                    color = ~pal(STATUS), fillColor = ~pal(STATUS),
@@ -155,7 +155,7 @@ map <- leaflet(data = data_waypoints) %>%
                    popup = ~paste("GPS:", GPS, "<br>Status:", STATUS)) %>%
   addMiniMap(position = "topright", width = 150, height = 150) %>% 
   addLegend("bottomright", pal = pal, values = ~STATUS, title = "Tree status") %>%
-  addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
+  addScaleBar(position = "bottomright", options = scaleBarOptions(imperial = FALSE)) %>%
   addControl(north_arrow, position = "topleft")
 
 # GENERA LA IMATGE ESTÀTICA (serveix per a què al pdf quedi la imatge estàtica)
@@ -207,7 +207,7 @@ leaflet(data = data_waypoints) %>%
                    popup = ~paste("GPS:", GPS, "<br>Status:", STATUS)) %>%
   addMiniMap(position = "topright", width = 150, height = 150) %>% 
   addLegend("bottomright", pal = pal, values = ~STATUS, title = "Tree status") %>%
-  addScaleBar(position = "bottomleft", options = scaleBarOptions(imperial = FALSE)) %>%
+  addScaleBar(position = "bottomright", options = scaleBarOptions(imperial = FALSE)) %>%
   addControl(north_arrow, position = "topleft")
 ```
 ```{r taula_waypoints, echo=FALSE}
